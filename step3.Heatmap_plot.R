@@ -1,5 +1,14 @@
 library(ComplexHeatmap)
 
+standarize.fun <- function(indata=NULL, halfwidth=NULL, centerFlag=T, scaleFlag=T) {  
+  outdata=t(scale(t(indata), center=centerFlag, scale=scaleFlag))
+  if (!is.null(halfwidth)) {
+    outdata[outdata>halfwidth]=halfwidth
+    outdata[outdata<(-halfwidth)]= -halfwidth
+  }
+  return(outdata)
+}
+
 ## heatmap ------------------------------------------------------------------------------------
 colormaps <- c(RColorBrewer::brewer.pal(name="Dark2", n = 8),RColorBrewer::brewer.pal(name="Paired", n = 12),RColorBrewer::brewer.pal(name="Set1", n = 9))
 heatmap.BlBkRd <- c("#54FEFF","#32ABAA","#125456","#000000","#510000","#A20000","#F30000")
@@ -53,7 +62,7 @@ ha_immune = HeatmapAnnotation(Response = meta_tmp$response,
 exp_tmp <- exp_tmp[rownames(exp_tmp) %in% CRG_genes$Symbol,]
 exp_tmp <- exp_tmp[rowSums(exp_tmp != 0) > 0, ]
 plotdata <- exp_tmp
-plotdata <- standarize.fun(plotdata, halfwidth = 2) # 数据标准化用于绘图
+plotdata <- standarize.fun(plotdata, halfwidth = 2)
 identical(rownames(meta_tmp), colnames(plotdata))
 
 # plotdata <- plotdata[,rownames(id_match_final)]
